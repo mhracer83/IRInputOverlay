@@ -1,0 +1,152 @@
+<Window x:Class="IRInputOverlay.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:IRInputOverlay"
+        Title="IR Input Overlay" Width="860" Height="380"
+        MinWidth="493" MinHeight="150"
+        WindowStyle="None" ResizeMode="CanResizeWithGrip"
+        AllowsTransparency="True" Background="Transparent" Topmost="True"
+        ShowInTaskbar="True">
+
+  <!-- Root overlay grid so we can float the close button at absolute top-right -->
+  <Grid>
+
+    <!-- Main UI chrome and content -->
+    <Border x:Name="RootChrome" CornerRadius="16" Background="Black" BorderBrush="White" BorderThickness="1" Padding="8">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Left: graph area with overlayed cog -->
+        <Grid Grid.Column="0">
+          <local:CombinedTraceGraph x:Name="CombinedGraph"
+                                    Title="Inputs"
+                                    ThrottleBrush="Green"
+                                    BrakeBrush="OrangeRed"
+                                    SteerBrush="Cyan" />
+          <Button x:Name="CogBtn"
+                  Width="24" Height="24"
+                  HorizontalAlignment="Right" VerticalAlignment="Top"
+                  Background="Transparent" BorderThickness="0"
+                  ToolTip="Settings" Panel.ZIndex="999">
+            <TextBlock FontFamily="Segoe MDL2 Assets"
+                       Text="&#xE713;" Foreground="White" FontSize="16"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+          </Button>
+        </Grid>
+
+        <!-- Right panel -->
+        <Grid Grid.Column="1" Margin="8,0,0,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- Status -->
+          <TextBlock x:Name="StatusText" Grid.Row="0" Grid.ColumnSpan="4" Text="Not connected"
+                     Foreground="White" FontSize="11" VerticalAlignment="Center"
+                     Margin="0,0,4,4" Opacity="0.9" />
+
+          <!-- Bars -->
+          <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <local:VerticalInputBar x:Name="BarClutch" Grid.Column="0"
+                                    HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                    Width="24" BarBrush="#0033CC" Margin="0,0,2,0" />
+            <local:VerticalInputBar x:Name="BarBrake" Grid.Column="1"
+                                    HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                    Width="24" BarBrush="OrangeRed" Margin="0,0,2,0" />
+            <local:VerticalInputBar x:Name="BarThrottle" Grid.Column="2"
+                                    HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                    Width="24" BarBrush="Green" Margin="0,0,2,0" />
+          </Grid>
+
+          <!-- Wheel + indicators -->
+          <Grid Grid.Row="1" Grid.Column="4" Margin="3,0,0,3"
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Viewbox Stretch="Uniform">
+              <Grid Width="550" Height="700">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="500"/>
+                  <RowDefinition Height="200"/>
+                </Grid.RowDefinitions>
+
+                <!-- Wheel -->
+                <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <Image x:Name="WheelImage"
+                         Width="500" Height="500"
+                         RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                      <RotateTransform x:Name="WheelRotation" Angle="0"/>
+                    </Image.RenderTransform>
+                  </Image>
+                </Grid>
+
+                <!-- Horizontal indicators -->
+                <Grid Grid.Row="1" Margin="0,6,0,0"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+
+                  <!-- Gear -->
+                  <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center">
+                    <TextBlock Text="Gear" Foreground="White" FontSize="50" Opacity="0.95"
+                               TextAlignment="Center"/>
+                    <TextBlock x:Name="GearText" Text="N" Foreground="White" FontSize="80" FontWeight="Bold"
+                               TextAlignment="Center"/>
+                  </StackPanel>
+
+                  <!-- MPH -->
+                  <StackPanel Grid.Column="4" Orientation="Vertical" HorizontalAlignment="Center">
+                    <TextBlock Text="MPH" Foreground="White" FontSize="50" Opacity="0.95"
+                               TextAlignment="Center"/>
+                    <TextBlock x:Name="SpeedText" Text="0" Foreground="White" FontSize="80" FontWeight="Bold"
+                               TextAlignment="Center"/>
+                  </StackPanel>
+                </Grid>
+              </Grid>
+            </Viewbox>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Border>
+
+    <!-- Floating close button at absolute top-right of the window -->
+    <Button x:Name="CloseBtn"
+            Width="10" Height="10"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="10"
+            Background="Transparent"
+            BorderThickness="0"
+            ToolTip="Close"
+            Panel.ZIndex="1000">
+      <TextBlock FontFamily="Segoe MDL2 Assets"
+                 Text="&#xE8BB;"
+                 Foreground="White"
+                 FontSize="16"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Center"/>
+    </Button>
+
+  </Grid>
+</Window>
